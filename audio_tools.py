@@ -1,7 +1,7 @@
 from pydub import AudioSegment
 
 def audioSlice(filename, sliceLength):
-    inputAudio = AudioSegment.from_wav(filename)
+    inputAudio = AudioSegment.from_file(filename, 'aac')
     slices = inputAudio.duration_seconds / sliceLength
 
     for i in range(int(slices)):

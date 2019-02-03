@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 def videoSlice(filename, sliceDuration, fps, sizeFraction):    
     vidcap = cv2.VideoCapture(filename)
@@ -21,3 +22,17 @@ def videoSlice(filename, sliceDuration, fps, sizeFraction):
         if count%countPerSlice==0:
             sliceNum = sliceNum + 1
 
+
+def videoRead(filename):
+    cap = cv2.VideoCapture(filename)
+    frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    buf = np.empty((frameCount, frameHeight, frameWidth, 3), np.dtype('uint8'))
+    fc = 0
+    ret = True
+    while (fc < frameCount  and ret):
+        ret, buf[fc] = cap.read()
+        fc += 1
+    cap.release()
+    return buf
