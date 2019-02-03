@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import moviepy.editor as mp
+import scipy.io.wavfile
 
 def videoSlice(filename, sliceDuration, fps, sizeFraction):    
     vidcap = cv2.VideoCapture(filename)

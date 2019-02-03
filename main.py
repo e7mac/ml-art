@@ -1,22 +1,15 @@
 from audio_tools import *
 from video_tools import *
+from file_tools import *
 import os
 from requests import get
 from pathlib import Path
-import moviepy.editor as mp
-import scipy.io.wavfile
-
-def makeMainDirectories():
-    createDirectory('input')
-    createDirectory('input/raw')
-    createDirectory('input/preprocessed')
-    createDirectory('output')
 
 makeMainDirectories()
 
-sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mov"
-# sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mov"
-# sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mov"
+sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
+# sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
+# sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
 download(sample, 'input/raw')
 
 
