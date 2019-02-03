@@ -5,3 +5,4 @@ RUN apt-get install --yes git vim
 RUN git clone https://github.com/e7mac/ml-art
 RUN pip install jupyter
 EXPOSE 8888
+EXPOSE 6006
