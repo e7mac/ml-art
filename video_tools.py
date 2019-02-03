@@ -36,3 +36,7 @@ def videoRead(filename):
         fc += 1
     cap.release()
     return buf
+
+def extractAudio(filename):
+    clip = mp.VideoFileClip(filename)
+    clip.audio.write_audiofile(filename + ".wav")
