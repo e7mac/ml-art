@@ -12,6 +12,17 @@ class AudioDataSet():
         self.SampleRate, self.signal = scipy.io.wavfile.read(filename)
         self.setDtype()
     
+    def mean(self):
+        return np.mean(self.signal, axis=0)
+
+    def std(self):
+        return np.std(self.signal, axis=0)
+
+    def n_features(self):
+        """This is for linear flattening"""
+        shape = self.signal.shape
+        return shape[0] * shape[1]
+    
     def setDtype(self):
         self.signal = self.signal.astype(np.float32, copy=False)
         self.signal = self.signal / 32767.

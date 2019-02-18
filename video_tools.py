@@ -16,6 +16,22 @@ class VideoDataSet():
         self.imgs = self.imgs / 255.
         self.imgs = self.imgs.astype(np.float32, copy=False)
 
+    def mean(self):
+        return np.mean(self.imgs, axis=0)
+
+    def std(self):
+        return np.std(self.imgs, axis=0) + 1e-10
+
+    def preprocess(self, img):
+        return (img - self.mean()) / self.std()
+
+    def deprocess(self, img):
+        return img * self.std() + self.mean()
+
+    def n_features(self):
+        """This is for linear flattening"""
+        shape = self.imgs.shape
+        return shape[1] * shape[2] * shape[3]
 
     def videoRead(self, filename):
         cap = cv2.VideoCapture(filename)
