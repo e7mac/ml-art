@@ -1,14 +1,12 @@
 from audio_tools import *
 from video_tools import *
 from file_tools import *
-import os
-from requests import get
-from pathlib import Path
-import tensorflow as tf
-import matplotlib.pyplot as plt
-import numpy as np
 from autoencoder import *
+
+import os
 import sys
+
+import tensorflow as tf
 
 def process(filename):
     v = VideoDataSet(filename)

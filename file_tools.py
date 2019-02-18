@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import requests
 
 def createDirectory(dirName):
     if not os.path.exists(dirName):
@@ -19,5 +20,5 @@ def download(url, dirName):
     if not my_file.is_file():
         with open(file_name, "wb") as file:
             print('Downloading file....')
-            response = get(url)
+            response = requests.get(url)
             file.write(response.content)
