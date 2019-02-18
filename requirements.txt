@@ -2,3 +2,4 @@ opencv-python
 pydub
 requests
 moviepy
+imageio-ffmpeg

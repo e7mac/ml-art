@@ -1,17 +1,37 @@
 from pydub import AudioSegment
+import scipy.io.wavfile
+import numpy as np
+import matplotlib.pyplot as plt
 
-def audioSlice(filename, sliceLength):
-    inputAudio = AudioSegment.from_file(filename, 'aac')
-    slices = inputAudio.duration_seconds / sliceLength
+class AudioDataSet():
+    """A class to store audio data set for AI processing"""
+    sampleRate = None
+    signal = []
 
-    for i in range(int(slices)):
-        startTime = i * sliceLength
-        endTime = startTime + sliceLength
-        if endTime > inputAudio.duration_seconds:
-            endTime = inputAudio.duration_seconds
-        audioSlice = AudioSegment.from_wav(filename)
-        audioSlice = audioSlice[startTime*1000:endTime*1000] #milliseconds
-        audioSlice.export('output/fileName_' + str(i) + '.wav', format="wav") #Exports to a wav file in the current path.
+    def __init__(self, filename):
+        self.SampleRate, self.signal = scipy.io.wavfile.read(filename)
+        self.setDtype()
+    
+    def setDtype(self):
+        self.signal = self.signal.astype(np.float32, copy=False)
+        self.signal = self.signal / 32767.
+
+    def plotWaveform(self):
+        plt.plot(self.signal)
+        plt.show()
+
+    def audioSlice(filename, sliceLength):
+        inputAudio = AudioSegment.from_file(filename, 'wav')
+        slices = inputAudio.duration_seconds / sliceLength
+
+        for i in range(int(slices)):
+            startTime = i * sliceLength
+            endTime = startTime + sliceLength
+            if endTime > inputAudio.duration_seconds:
+                endTime = inputAudio.duration_seconds
+            audioSlice = AudioSegment.from_wav(filename)
+            audioSlice = audioSlice[startTime*1000:endTime*1000] #milliseconds
+            audioSlice.export('output/fileName_' + str(i) + '.wav', format="wav") #Exports to a wav file in the current path.
 
 # import matplotlib.pyplot as plt
 # import numpy as np
