@@ -108,7 +108,7 @@ class Autoencoder():
         X2 = tf.placeholder(np.float32, name='X2', shape=(None, a.n_features()))
         self.X1 = X1
         self.X2 = X2
-        encoder_dimensions = [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2]
+        encoder_dimensions = [1024, 256]
         self.W1s, self.W2s, self.z = self.encode(X1, X2, encoder_dimensions)
         # [print(op.name) for op in tf.get_default_graph().get_operations()]
         # print(v.n_features())
