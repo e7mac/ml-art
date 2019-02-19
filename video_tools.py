@@ -35,16 +35,24 @@ class VideoDataSet():
 
     def videoRead(self, filename):
         cap = cv2.VideoCapture(filename)
-        frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        buf = np.empty((frameCount, frameHeight, frameWidth, 3), np.dtype('uint8'))
+        self.frameRate = int(cap.get(cv2.CAP_PROP_FPS))
+        self.frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        minDim = min(self.frameWidth, self.frameHeight)
+        dim = (minDim, minDim)
+        print(self.frameHeight)
+        print(self.frameWidth)
+        buf = np.empty((self.frameCount, self.frameHeight, self.frameWidth, 3), np.dtype('uint8'))
         fc = 0
         ret = True
-        while (fc < frameCount  and ret):
+        while (fc < self.frameCount  and ret):
             ret, buf[fc] = cap.read()
+            # buf[fc] = cv2.resize(buf[fc], dsize=dim)
             fc += 1
         cap.release()
+        # buf = cv2.resize(buf, dsize=dim)
+        buf = buf[...,::-1] # opencv gets BGR.. convert to RGB
         return buf
 
     def videoSlice(self, filename, sliceDuration, fps, sizeFraction):    

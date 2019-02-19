@@ -9,7 +9,7 @@ class AudioDataSet():
     signal = []
 
     def __init__(self, filename):
-        self.SampleRate, self.signal = scipy.io.wavfile.read(filename)
+        self.sampleRate, self.signal = scipy.io.wavfile.read(filename)
         self.setDtype()
     
     def mean(self):

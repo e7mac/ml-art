@@ -1,21 +1,67 @@
 from audio_tools import *
 from video_tools import *
+from audiovisual_tools import *
 from file_tools import *
 from autoencoder import *
+import networks
 
 import os
 import sys
 
 import tensorflow as tf
 
-def process(filename):
-    v = VideoDataSet(filename)
-    v.extractAudio()
-    a = AudioDataSet(v.audioFilename())
-    return v, a
+_NUM_TEMPORAL_FRAMES = 5
+_AUDIO_DIMS = 1470
+_IMAGE_CROP_SIZE = 256
+_LEARNING_RATE = 1e-5
 
-# preprocess()
-# load()
+
+def _train(train_op, feed_dict, train_dir, max_steps=1000, summary_steps=10, 
+           log_steps=10, save_checkpoint_secs=180):
+    """
+    """
+    session_config = tf.ConfigProto(
+        allow_soft_placement=True, log_device_placement=False)
+    global_step = tf.train.get_or_create_global_step()
+    logging_tensors = {
+        'step': global_step, 'loss': tf.losses.get_total_loss()}
+    hooks = [tf.train.StopAtStepHook(max_steps)]
+    logging_hook = tf.train.LoggingTensorHook(
+        logging_tensors, every_n_iter=log_steps)
+    hooks += [logging_hook]
+    with tf.train.MonitoredTrainingSession(
+        checkpoint_dir=train_dir,
+        hooks=hooks,
+        save_checkpoint_secs=save_checkpoint_secs,
+        save_summaries_steps=summary_steps,
+        log_step_count_steps=log_steps,
+        config=session_config) as sess:
+      while not sess.should_stop():
+        sess.run(train_op, feed_dict=feed_dict)
+
+
+def _get_data():
+    """
+    """
+    makeMainDirectories()
+
+    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
+    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
+    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
+    # sample = "https://www.sample-videos.com/video123/mp4/240/big_buck_bunny_240p_20mb.mp4"
+    # download(sample, 'input/raw')
+    filename = "input/raw/BreakMeMadeira-small.mp4"
+    # filename = "input/raw/big_buck_bunny_240p_20mb.mp4"
+
+    av = AudiovisualDataSet(filename)
+    vs = []
+    audios = []
+    for i in range(_NUM_TEMPORAL_FRAMES):
+        v, a = av.slice(0)
+        vs.append(cv2.resize(v, (_IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE)))
+        audios.append(a[:,0])
+
+    return np.expand_dims(np.concatenate(vs, axis=-1), 0), np.expand_dims(np.concatenate(audios, axis=-1), 0)
 
 
 def main():
@@ -27,18 +73,37 @@ def main():
         if len(split) > 1:
             output = split[-1]
             output_directory = output
+
+    # Set up data
+    inputs = tf.placeholder(
+        tf.float32, [1, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
+    targets = tf.placeholder(
+        tf.float32, [1, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
+    images_arr, audios_arr = _get_data()
+    feed_dict = {
+        inputs: images_arr,
+        targets: audios_arr
+    }
+
+    # Create model.
+    outputs = networks.image_encoder(
+        inputs, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES)
     
-    makeMainDirectories()
+    # Add losses.
+    l1_loss = tf.losses.absolute_difference(targets, outputs)
+    tf.losses.add_loss(l1_loss)
+    tf.summary.scalar('l1_loss', l1_loss)
 
-    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
-    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
-    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
-    download(sample, 'input/raw')
+    # Train!
+    optimizer = tf.train.AdamOptimizer(_LEARNING_RATE)
+    loss_op = tf.losses.get_total_loss()
+    train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
+    _train(
+        train_op, 
+        feed_dict,
+        train_dir=output_directory + '/tmp/image_to_sound/train')
 
-    filename = "input/raw/BreakMeMadeira-small.mp4"
-
-    v, a = process(filename)
-    a = Autoencoder(v, a, output_directory)
+    # a = Autoencoder(av.video, av.audio, output_directory)
 
 if __name__ == "__main__":
     main()
