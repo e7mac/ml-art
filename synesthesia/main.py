@@ -118,8 +118,7 @@ def main():
             train_op, 
             feed_dict,
             train_dir=output_directory + '/tmp/image_to_sound/train')
-
-    audio_pred = np.array([])
+    print('training done')
     audio_pred_array = []
     # Infer 
     for i in range(1):
@@ -129,22 +128,13 @@ def main():
             targets: audios_arr
         }
         _infer(outputs, feed_dict)
-        try:
-            print("1")
-            np.concatenate(audio_pred, np.array(outputs))    
-        except:
-            print("1 failed")
-        try:
-            print("2")
-            audio_pred_array.append(outputs)
-        except:
-            print("2 failed")
-        try:
-            print("3")
-            audio_pred_array.append(outputs.tolist())
-        except:
-            print("3 failed")
-        
+        print('infer done')
+        audio_pred_array.append(outputs)
+        print('append done')
+        audio_pred_array = np.array(audio_pred_array).flatten()
+        print('np flatten done')
+        writeWaveFile(audio_pred_array)
+        print('write wave done')
     
 if __name__ == "__main__":
     main()
