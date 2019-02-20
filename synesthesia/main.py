@@ -127,8 +127,8 @@ def main():
         feed_dict = {
             inputs: images_arr,
         }
-        _infer(targets, feed_dict)
-        audio_pred.concatenate(np.array(targets))
+        _infer(outputs, feed_dict)
+        audio_pred.concatenate(np.array(outputs))
     
 if __name__ == "__main__":
     main()
