@@ -13,9 +13,7 @@ def makeMainDirectories():
     createDirectory('output')
 
 def download(url, dirName):
-    print('here')
     file_name = dirName + '/' + url.split('/')[-1]
-    print(file_name)
     my_file = Path(file_name)
     if not my_file.is_file():
         with open(file_name, "wb") as file:
