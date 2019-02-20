@@ -59,7 +59,7 @@ def getBatchFromData(av, startFrame):
     vs = []
     audios = []
     for i in range(_NUM_TEMPORAL_FRAMES):
-        v, a = av.slice(i)
+        v, a = av.slice(startFrame + i)
         vs.append(cv2.resize(v, (_IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE)))
         audios.append(a[:,0])
     vs = np.expand_dims(np.concatenate(vs, axis=-1), 0)
