@@ -133,7 +133,7 @@ def main():
         print('append done')
         audio_pred_array = np.array(audio_pred_array).flatten()
         print('np flatten done')
-        writeWaveFile(audio_pred_array)
+        writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
         print('write wave done')
     
 if __name__ == "__main__":
