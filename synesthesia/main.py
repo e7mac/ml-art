@@ -21,7 +21,7 @@ def _infer(output, feed_dict):
     """
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        sess.run(output, feed_dict=feed_dict)
+        return sess.run(output, feed_dict=feed_dict)
 
 def _train(train_op, feed_dict, train_dir, max_steps=1000, summary_steps=10, 
            log_steps=10, save_checkpoint_secs=180):
@@ -129,9 +129,9 @@ def main():
             inputs: images_arr,
             targets: audios_arr
         }
-        _infer(outputs, feed_dict)
+        inference = _infer(outputs, feed_dict)
         print('infer done')
-        audio_pred_array.append(outputs)
+        audio_pred_array.append(inference.tolist())
         print('append done')
         audio_pred_array = np.array(audio_pred_array).flatten()
         print('np flatten done')
