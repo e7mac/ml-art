@@ -39,7 +39,6 @@ def _train(train_op, feed_dict, train_dir, max_steps=1000, summary_steps=10,
       while not sess.should_stop():
         sess.run(train_op, feed_dict=feed_dict)
 
-
 def _get_data():
     """
     """
@@ -101,8 +100,6 @@ def main():
     # Batch 
     for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
         images_arr, audios_arr = getBatchFromData(av, i)
-        print(images_arr.shape)
-        print(audios_arr.shape)
         feed_dict = {
             inputs: images_arr,
             targets: audios_arr
@@ -111,8 +108,6 @@ def main():
             train_op, 
             feed_dict,
             train_dir=output_directory + '/tmp/image_to_sound/train')
-
-    # a = Autoencoder(av.video, av.audio, output_directory)
 
 if __name__ == "__main__":
     main()
