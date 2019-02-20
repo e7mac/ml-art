@@ -92,8 +92,6 @@ def main():
     targets = tf.placeholder(
         tf.float32, [1, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
     av = _get_data()
-    writeWaveFile(output_directory + "/output.wav", av.audio.sampleRate, av.audio.signal)
-    return
     # Create model.
     outputs = networks.image_encoder(
         inputs, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES)
