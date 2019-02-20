@@ -108,6 +108,7 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
+    # for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
     for i in range(1):
         images_arr, audios_arr = getBatchFromData(av, i)
         feed_dict = {
@@ -121,6 +122,7 @@ def main():
     print('training done')
     audio_pred_array = []
     # Infer 
+    # for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
     for i in range(1):
         images_arr, audios_arr = getBatchFromData(av, i)
         feed_dict = {
@@ -133,6 +135,9 @@ def main():
         print('append done')
         audio_pred_array = np.array(audio_pred_array).flatten()
         print('np flatten done')
+        print(audio_pred_array)
+        print(audio_pred_array.shape)
+        print(audio_pred_array.dtype)
         writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
         print('write wave done')
     
