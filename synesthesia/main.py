@@ -16,6 +16,12 @@ _IMAGE_CROP_SIZE = 256
 _LEARNING_RATE = 1e-5
 
 
+def _infer(output, feed_dict):
+    """
+    """
+    with tf.Session() as sess:
+      sess.run(output, feed_dict=feed_dict)
+
 def _train(train_op, feed_dict, train_dir, max_steps=1000, summary_steps=10, 
            log_steps=10, save_checkpoint_secs=180):
     """
@@ -114,5 +120,15 @@ def main():
             feed_dict,
             train_dir=output_directory + '/tmp/image_to_sound/train')
 
+    audio_pred = np.array([])
+    # Infer 
+    for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
+        images_arr, audios_arr = getBatchFromData(av, i)
+        feed_dict = {
+            inputs: images_arr,
+        }
+        _infer(targets, feed_dict)
+        audio_pred.concatenate(np.array(targets))
+    
 if __name__ == "__main__":
     main()
