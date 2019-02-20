@@ -130,6 +130,9 @@ def main():
             targets: audios_arr
         }
         inference = _infer(outputs, feed_dict)
+        print(inference.shape)
+        print(inference.dtype)
+        print(inference)
         print('infer done')
         audio_pred_array.append(inference.tolist())
         print('append done')
