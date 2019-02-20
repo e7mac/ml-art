@@ -109,7 +109,7 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    for batch in range((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize):
+    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
         for frame in range(batch*batchSize, batchSize):
             images_arr, audios_arr = getTemporalFramesFromData(av, frame)
             feed_dict = {
@@ -123,7 +123,7 @@ def main():
     print('training done')
     audio_pred_array = []
     # Infer 
-    for batch in range((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize):
+    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
         for frame in range(batch*batchSize, batchSize):
             images_arr, audios_arr = getTemporalFramesFromData(av, frame)
             feed_dict = {
