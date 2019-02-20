@@ -88,7 +88,7 @@ def main():
             output_directory = output
 
     # Set up data
-    batchSize = 1
+    batchSize = 8
     inputs = tf.placeholder(
         tf.float32, [batchSize, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
     targets = tf.placeholder(
