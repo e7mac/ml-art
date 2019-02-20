@@ -120,6 +120,7 @@ def main():
             train_dir=output_directory + '/tmp/image_to_sound/train')
 
     audio_pred = np.array([])
+    audio_pred_array = []
     # Infer 
     for i in range(1):
         images_arr, audios_arr = getBatchFromData(av, i)
@@ -128,7 +129,22 @@ def main():
             targets: audios_arr
         }
         _infer(outputs, feed_dict)
-        audio_pred.concatenate(np.array(outputs))
+        try:
+            print("1")
+            np.concatenate(audio_pred, np.array(outputs))    
+        except:
+            print("1 failed")
+        try:
+            print("2")
+            audio_pred_array.append(outputs)
+        except:
+            print("2 failed")
+        try:
+            print("3")
+            audio_pred_array.append(outputs.tolist())
+        except:
+            print("3 failed")
+        
     
 if __name__ == "__main__":
     main()
