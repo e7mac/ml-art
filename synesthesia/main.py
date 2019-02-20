@@ -81,8 +81,8 @@ def getTemporalFramesFromData(av, startFrame):
         v, a = av.slice(startFrame + i)
         vs.append(cv2.resize(v, (_IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE)))
         audios.append(a[:,0])
-    # vs = np.expand_dims(np.concatenate(vs, axis=-1), 0)
-    # audios = np.expand_dims(np.concatenate(audios, axis=0), 0)    
+    vs = np.concatenate(vs, axis=-1)
+    audios = np.concatenate(audios, axis=0)
     return vs, audios
 
 def writeWaveFile(outputfile, sampleRate, data):
