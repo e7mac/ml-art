@@ -41,8 +41,6 @@ class VideoDataSet():
         self.frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         minDim = min(self.frameWidth, self.frameHeight)
         dim = (minDim, minDim)
-        print(self.frameHeight)
-        print(self.frameWidth)
         buf = np.empty((self.frameCount, self.frameHeight, self.frameWidth, 3), np.dtype('uint8'))
         fc = 0
         ret = True

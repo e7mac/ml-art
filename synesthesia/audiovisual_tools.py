@@ -14,11 +14,6 @@ class AudiovisualDataSet():
         self.video = VideoDataSet(filename)
         self.video.extractAudio()
         self.audio = AudioDataSet(self.video.audioFilename())
-    
-        v, a = self.slice(0)
-        # plt.imshow(v)
-        # plt.plot(a)
-        # plt.show()
 
     def printStats(self):
         print(self.video.frameRate)
@@ -38,6 +33,5 @@ class AudiovisualDataSet():
     def audioForFrame(self, frameIndex):
         duration = 1. / self.video.frameRate
         numAudioFrames =  int(duration * self.audio.sampleRate)
-        startTime = frameIndex / self.video.frameRate
-        startAudioSampleIndex = int(startTime * self.audio.sampleRate)
-        return self.audio.signal[startAudioSampleIndex:numAudioFrames]
+        startAudioSampleIndex = frameIndex * numAudioFrames
+        return self.audio.signal[startAudioSampleIndex:startAudioSampleIndex+numAudioFrames]

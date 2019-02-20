@@ -54,15 +54,18 @@ def _get_data():
     # filename = "input/raw/big_buck_bunny_240p_20mb.mp4"
 
     av = AudiovisualDataSet(filename)
+    return av
+
+def getBatchFromData(av, startFrame):
     vs = []
     audios = []
     for i in range(_NUM_TEMPORAL_FRAMES):
-        v, a = av.slice(0)
+        v, a = av.slice(i)
         vs.append(cv2.resize(v, (_IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE)))
         audios.append(a[:,0])
-
-    return np.expand_dims(np.concatenate(vs, axis=-1), 0), np.expand_dims(np.concatenate(audios, axis=-1), 0)
-
+    vs = np.expand_dims(np.concatenate(vs, axis=-1), 0)
+    audios = np.expand_dims(np.concatenate(audios, axis=0), 0)    
+    return vs, audios
 
 def main():
     args = sys.argv
@@ -79,11 +82,7 @@ def main():
         tf.float32, [1, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
     targets = tf.placeholder(
         tf.float32, [1, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
-    images_arr, audios_arr = _get_data()
-    feed_dict = {
-        inputs: images_arr,
-        targets: audios_arr
-    }
+    av = _get_data()
 
     # Create model.
     outputs = networks.image_encoder(
@@ -98,10 +97,20 @@ def main():
     optimizer = tf.train.AdamOptimizer(_LEARNING_RATE)
     loss_op = tf.losses.get_total_loss()
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
-    _train(
-        train_op, 
-        feed_dict,
-        train_dir=output_directory + '/tmp/image_to_sound/train')
+
+    # Batch 
+    for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
+        images_arr, audios_arr = getBatchFromData(av, i)
+        print(images_arr.shape)
+        print(audios_arr.shape)
+        feed_dict = {
+            inputs: images_arr,
+            targets: audios_arr
+        }
+        _train(
+            train_op, 
+            feed_dict,
+            train_dir=output_directory + '/tmp/image_to_sound/train')
 
     # a = Autoencoder(av.video, av.audio, output_directory)
 
