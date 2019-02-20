@@ -62,7 +62,7 @@ def _get_data():
     av = AudiovisualDataSet(filename)
     return av
 
-def getBatchFromData(av, startFrame):
+def getTemporalFramesFromData(av, startFrame):
     vs = []
     audios = []
     for i in range(_NUM_TEMPORAL_FRAMES):
@@ -88,10 +88,11 @@ def main():
             output_directory = output
 
     # Set up data
+    batchSize = 1
     inputs = tf.placeholder(
-        tf.float32, [1, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
+        tf.float32, [batchSize, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
     targets = tf.placeholder(
-        tf.float32, [1, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
+        tf.float32, [batchSize, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
     av = _get_data()
     # Create model.
     outputs = networks.image_encoder(
@@ -108,41 +109,41 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
-    # for i in range(1):
-        images_arr, audios_arr = getBatchFromData(av, i)
-        feed_dict = {
-            inputs: images_arr,
-            targets: audios_arr
-        }
-        _train(
-            train_op, 
-            feed_dict,
-            train_dir=output_directory + '/tmp/image_to_sound/train')
+    for batch in range((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize):
+        for frame in range(batch*batchSize, batchSize):
+            images_arr, audios_arr = getTemporalFramesFromData(av, frame)
+            feed_dict = {
+                inputs: images_arr,
+                targets: audios_arr
+            }
+            _train(
+                train_op, 
+                feed_dict,
+                train_dir=output_directory + '/tmp/image_to_sound/train')
     print('training done')
     audio_pred_array = []
     # Infer 
-    for i in range(av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES):
-    # for i in range(1):
-        images_arr, audios_arr = getBatchFromData(av, i)
-        feed_dict = {
-            inputs: images_arr,
-            targets: audios_arr
-        }
-        inference = _infer(outputs, feed_dict)
+    for batch in range((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize):
+        for frame in range(batch*batchSize, batchSize):
+            images_arr, audios_arr = getTemporalFramesFromData(av, frame)
+            feed_dict = {
+                inputs: images_arr,
+                targets: audios_arr
+            }
+            inference = _infer(outputs, feed_dict)
         print(inference.shape)
         print(inference.dtype)
         print(inference)
         print('infer done')
         audio_pred_array.append(inference.tolist())
         print('append done')
-        audio_pred_array = np.array(audio_pred_array).flatten()
-        print('np flatten done')
-        print(audio_pred_array)
-        print(audio_pred_array.shape)
-        print(audio_pred_array.dtype)
-        writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
-        print('write wave done')
+    audio_pred_array = np.array(audio_pred_array).flatten()
+    print('np flatten done')
+    print(audio_pred_array)
+    print(audio_pred_array.shape)
+    print(audio_pred_array.dtype)
+    writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
+    print('write wave done')
     
 if __name__ == "__main__":
     main()
