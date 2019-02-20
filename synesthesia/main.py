@@ -123,7 +123,8 @@ def main():
     for i in range(1):
         images_arr, audios_arr = getBatchFromData(av, i)
         feed_dict = {
-            inputs: images_arr
+            inputs: images_arr,
+            targets: audios_arr
         }
         _infer(outputs, feed_dict)
         audio_pred.concatenate(np.array(outputs))
