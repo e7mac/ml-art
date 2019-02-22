@@ -23,8 +23,24 @@ def _infer(output, feed_dict):
         sess.run(tf.global_variables_initializer())
         return sess.run(output, feed_dict=feed_dict)
 
+def _get_model_init_fn(checkpoint_load_path):
+ """Constructs and returns a restore_fn from a given checkpoint path."""
+ variables_to_restore = tf.contrib.framework.get_variables_to_restore(
+     exclude=['global_step'])
+ if variables_to_restore:
+   init_op, init_feed_dict = tf.contrib.framework.assign_from_checkpoint(
+       checkpoint_load_path, variables_to_restore, ignore_missing_vars=True)
+   global_step = tf.train.get_or_create_global_step()
+
+   def restore_fn(unused_scaffold, sess):
+     sess.run(init_op, init_feed_dict)
+     sess.run([global_step])
+
+   return restore_fn
+ return None
+
 def _train(train_op, feed_dict, train_dir, max_steps=10, summary_steps=10, 
-           log_steps=10, save_checkpoint_secs=180):
+           log_steps=10, save_checkpoint_secs=180, checkpoint_load_path=None):
     """
     """
     session_config = tf.ConfigProto(
@@ -36,9 +52,17 @@ def _train(train_op, feed_dict, train_dir, max_steps=10, summary_steps=10,
     logging_hook = tf.train.LoggingTensorHook(
         logging_tensors, every_n_iter=log_steps)
     hooks += [logging_hook]
+    if checkpoint_load_path:
+        init_fn = _get_model_init_fn(checkpoint_load_path)
+    summary_op = tf.summary.merge_all()
+    scaffold = tf.train.Scaffold(
+        init_fn=init_fn,
+        summary_op=summary_op,
+    )
     with tf.train.MonitoredTrainingSession(
         checkpoint_dir=train_dir,
         hooks=hooks,
+        scaffold=scaffold,
         save_checkpoint_secs=save_checkpoint_secs,
         save_summaries_steps=summary_steps,
         log_step_count_steps=log_steps,
@@ -94,11 +118,7 @@ def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
     print(audioArray)
     print(audioArray.shape)
     print(audioArray.dtype)
-    audioArray = np.array(audioArray).flatten()
-    print(audioArray)
-    print(audioArray.shape)
-    print(audioArray.dtype)
-    audioArray = audioArray.astype(np.float32)
+    audioArray = np.array(audioArray, dtype=np.float32).flatten()
     print(audioArray)
     print(audioArray.shape)
     print(audioArray.dtype)
@@ -126,6 +146,7 @@ def main():
     outputs = networks.image_encoder(
         inputs, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES)
     tf.summary.audio('outputs', outputs, av.audio.sampleRate)
+    tf.summary.audio('targets', targets, av.audio.sampleRate)
     
     # Add losses.
     l1_loss = tf.losses.absolute_difference(targets, outputs)
@@ -139,8 +160,8 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    # for batch in range(60,61):
+    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
@@ -155,8 +176,8 @@ def main():
     print('training done')
     audio_pred_array = []
     # Infer 
-    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    # for batch in range(60,61):
+    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
@@ -169,19 +190,7 @@ def main():
         print('infer done')
         audio_pred_array.append(inference.tolist())
         print('append done')
-    audio_pred_array = np.array(audio_pred_array).flatten()
-    print('np flatten done')
-    print(audio_pred_array)
-    print(audio_pred_array.shape)
-    print(audio_pred_array.dtype)
-    print(np.min(audio_pred_array.dtype))
-    print(np.max(audio_pred_array.dtype))
-    print(av.audio.sampleRate)
-    audio_pred_array = audio_pred_array.astype(np.float32)
-    writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
-    print('write wave done')
-
-    flattenAudioAndWriteWav(audio_pred_array, output_directory + '/preds.wav', av.audio.sampleRate)
+    flattenAudioAndWriteWav(inference, output_directory + '/inference.wav', av.audio.sampleRate)
     flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
     
     
