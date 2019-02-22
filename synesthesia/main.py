@@ -89,6 +89,12 @@ def writeWaveFile(outputfile, sampleRate, data):
     import scipy.io.wavfile
     scipy.io.wavfile.write(outputfile, sampleRate, data)
 
+def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
+    audioArray = np.array(audioArray).flatten()
+    audioArray = audioArray.astype(np.float32)
+    writeWaveFile(output_directory + '/' + filename, sampleRate, audioArray)
+
+
 def main():
     args = sys.argv
     output_directory = "."
@@ -160,8 +166,12 @@ def main():
     print(np.min(audio_pred_array.dtype))
     print(np.max(audio_pred_array.dtype))
     print(av.audio.sampleRate)
+    audio_pred_array = audio_pred_array.astype(np.float32)
     writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
     print('write wave done')
+
+    flattenAudioAndWriteWav(targets, 'targets.wav', av.audio.sampleRate)
+    flattenAudioAndWriteWav(audio_pred_array, 'preds.wav', audio_pred_array)
     
 if __name__ == "__main__":
     main()
