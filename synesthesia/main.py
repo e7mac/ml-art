@@ -125,7 +125,7 @@ def main():
     # Create model.
     outputs = networks.image_encoder(
         inputs, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES)
-    tf.summary.audio('outputs', l2_loss, av.audio.sampleRate)
+    tf.summary.audio('outputs', outputs, av.audio.sampleRate)
     
     # Add losses.
     l1_loss = tf.losses.absolute_difference(targets, outputs)
