@@ -52,6 +52,7 @@ def _train(train_op, feed_dict, train_dir, max_steps=10, summary_steps=10,
     logging_hook = tf.train.LoggingTensorHook(
         logging_tensors, every_n_iter=log_steps)
     hooks += [logging_hook]
+    init_fn = None
     if checkpoint_load_path:
         init_fn = _get_model_init_fn(checkpoint_load_path)
     summary_op = tf.summary.merge_all()
