@@ -76,8 +76,8 @@ def _get_data():
     """
     makeMainDirectories()
 
-    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
-    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
+    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
+    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
     # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
     # sample = "https://www.sample-videos.com/video123/mp4/240/big_buck_bunny_240p_20mb.mp4"
     download(sample, 'input/raw')
@@ -139,9 +139,9 @@ def main():
     # Set up data
     batchSize = 8
     inputs = tf.placeholder(
-        tf.float32, [batchSize, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES])
+        tf.float32, [batchSize, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES], name='inputs')
     targets = tf.placeholder(
-        tf.float32, [batchSize, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES])
+        tf.float32, [batchSize, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES], name='targets')
     av = _get_data()
     # Create model.
     outputs = networks.image_encoder(
@@ -161,8 +161,8 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    for batch in range(60,61):
+    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    # for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
@@ -175,24 +175,24 @@ def main():
             feed_dict,
             train_dir=output_directory + '/tmp/image_to_sound/train')
     print('training done')
-    audio_pred_array = []
-    # Infer 
-    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    for batch in range(60,61):
-        images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
-        feed_dict = {
-            inputs: images_arr,
-            targets: audios_arr
-        }
-        inference = _infer(outputs, feed_dict)
-        print(inference.shape)
-        print(inference.dtype)
-        print(inference)
-        print('infer done')
-        audio_pred_array.append(inference.tolist())
-        print('append done')
-    flattenAudioAndWriteWav(inference, output_directory + '/inference.wav', av.audio.sampleRate)
-    flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
+    # audio_pred_array = []
+    # # Infer
+    # # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    # for batch in range(60,61):
+    #     images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
+    #     feed_dict = {
+    #         inputs: images_arr,
+    #         targets: audios_arr
+    #     }
+    #     inference = _infer(outputs, feed_dict)
+    #     print(inference.shape)
+    #     print(inference.dtype)
+    #     print(inference)
+    #     print('infer done')
+    #     audio_pred_array.append(inference.tolist())
+    #     print('append done')
+    # flattenAudioAndWriteWav(inference, output_directory + '/inference.wav', av.audio.sampleRate)
+    # flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
     
     
 if __name__ == "__main__":

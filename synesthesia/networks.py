@@ -20,5 +20,5 @@ def image_encoder(input_images, output_dims):
   outputs = _encoder_block(outputs, 256)
   outputs = _encoder_block(outputs, 512)
   outputs = tf.keras.layers.Flatten()(outputs)
-  outputs = tf.keras.layers.Dense(output_dims, activation=None)(outputs)
+  outputs = tf.keras.layers.Dense(output_dims, activation=None, name='outputs')(outputs)
   return outputs
