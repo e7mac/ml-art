@@ -20,7 +20,7 @@ def _infer(output, feed_dict):
     """
     """
     with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
+        # sess.run(tf.global_variables_initializer())
         return sess.run(output, feed_dict=feed_dict)
 
 def _get_model_init_fn(checkpoint_load_path):
@@ -161,8 +161,8 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    # for batch in range(60,61):
+    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
@@ -177,8 +177,8 @@ def main():
     print('training done')
     audio_pred_array = []
     # Infer 
-    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    # for batch in range(60,61):
+    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
