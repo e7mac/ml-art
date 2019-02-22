@@ -16,12 +16,27 @@ _IMAGE_CROP_SIZE = 256
 _LEARNING_RATE = 1e-5
 
 
-def _infer(output, feed_dict):
+def _infer(output, inputs, targets):
     """
     """
     with tf.Session() as sess:
-        # sess.run(tf.global_variables_initializer())
-        return sess.run(output, feed_dict=feed_dict)
+        saver = tf.train.import_meta_graph('/Users/mayank/Downloads/model.ckpt-717.meta')
+        saver.restore(sess,tf.train.latest_checkpoint('/Users/mayank/Downloads/'))
+        # print(saver)
+        # print(saver.signature_def['serving_default'].inputs)
+        # print(saver.signature_def['serving_default'].outputs)
+        # [print(n.name) for n in tf.get_default_graph().get_all]
+        # graph = tf.get_default_graph()
+        # list_of_tuples = [print(op.values()) for op in graph.get_operations()]
+        a = tf.get_default_graph().get_tensor_by_name('Placeholder:0')
+        b = tf.get_default_graph().get_tensor_by_name('Placeholder_1:0')
+        o = tf.get_default_graph().get_tensor_by_name('dense/BiasAdd:0')
+        oo = sess.run(o, feed_dict={
+            a: inputs,
+            b: targets
+        })
+        print(oo)
+        return oo
 
 def _get_model_init_fn(checkpoint_load_path):
  """Constructs and returns a restore_fn from a given checkpoint path."""
@@ -161,21 +176,21 @@ def main():
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
     # Batch 
-    # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    for batch in range(60,61):
-        images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
-        feed_dict = {
-            inputs: images_arr,
-            targets: audios_arr
-        }
-        print(audios_arr.shape)
-        print(audios_arr.dtype)
-        _train(
-            train_op, 
-            feed_dict,
-            train_dir=output_directory + '/tmp/image_to_sound/train')
-    print('training done')
-    audio_pred_array = []
+    # # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    # for batch in range(60,61):
+    #     images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
+    #     feed_dict = {
+    #         inputs: images_arr,
+    #         targets: audios_arr
+    #     }
+    #     print(audios_arr.shape)
+    #     print(audios_arr.dtype)
+    #     _train(
+    #         train_op, 
+    #         feed_dict,
+    #         train_dir=output_directory + '/tmp/image_to_sound/train')
+    # print('training done')
+    # audio_pred_array = []
     # Infer 
     # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
     for batch in range(60,61):
@@ -184,13 +199,13 @@ def main():
             inputs: images_arr,
             targets: audios_arr
         }
-        inference = _infer(outputs, feed_dict)
-        print(inference.shape)
-        print(inference.dtype)
-        print(inference)
-        print('infer done')
-        audio_pred_array.append(inference.tolist())
-        print('append done')
+        inference = _infer(outputs, images_arr, audios_arr)
+        # print(inference.shape)
+        # print(inference.dtype)
+        # print(inference)
+        # print('infer done')
+        # audio_pred_array.append(inference.tolist())
+        # print('append done')
     flattenAudioAndWriteWav(inference, output_directory + '/inference.wav', av.audio.sampleRate)
     flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
     
