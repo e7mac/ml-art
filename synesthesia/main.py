@@ -13,7 +13,7 @@ import tensorflow as tf
 _NUM_TEMPORAL_FRAMES = 5
 _AUDIO_DIMS = 1470
 _IMAGE_CROP_SIZE = 256
-_LEARNING_RATE = 1e-5
+_LEARNING_RATE = 1e-6
 
 
 def _infer(output, feed_dict):
