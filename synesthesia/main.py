@@ -79,10 +79,9 @@ def _get_data():
     # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
     sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
     # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
-    # sample = "https://www.sample-videos.com/video123/mp4/240/big_buck_bunny_240p_20mb.mp4"
     download(sample, 'input/raw')
-    filename = "input/raw/BreakMeMadeira-small.mp4"
-    # filename = "input/raw/big_buck_bunny_240p_20mb.mp4"
+    # filename = "input/raw/BreakMeMadeira-small.mp4"
+    filename = "input/raw/BreakMeMadeira-medium.mp4"
 
     av = AudiovisualDataSet(filename)
     return av
