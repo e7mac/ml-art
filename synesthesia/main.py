@@ -182,7 +182,7 @@ def main():
     print('write wave done')
 
     flattenAudioAndWriteWav(audio_pred_array, output_directory + '/preds.wav', av.audio.sampleRate)
-    flattenAudioAndWriteWav(targets, output_directory + '/targets.wav', av.audio.sampleRate)
+    flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
     
     
 if __name__ == "__main__":
