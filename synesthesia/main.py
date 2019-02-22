@@ -23,7 +23,7 @@ def _infer(output, feed_dict):
         sess.run(tf.global_variables_initializer())
         return sess.run(output, feed_dict=feed_dict)
 
-def _train(train_op, feed_dict, train_dir, max_steps=1000, summary_steps=10, 
+def _train(train_op, feed_dict, train_dir, max_steps=10, summary_steps=10, 
            log_steps=10, save_checkpoint_secs=180):
     """
     """
