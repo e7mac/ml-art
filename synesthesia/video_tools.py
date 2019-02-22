@@ -45,7 +45,8 @@ class VideoDataSet():
         fc = 0
         ret = True
         while (fc < self.frameCount  and ret):
-            ret, buf[fc] = cap.read() / 255.0
+            ret, buf[fc] = cap.read()
+            buf[fc] = buf[fc] / 255.0
             fc += 1
         cap.release()
         buf = buf[...,::-1] # opencv gets BGR.. convert to RGB
