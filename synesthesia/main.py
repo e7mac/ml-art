@@ -129,6 +129,8 @@ def main():
             inputs: images_arr,
             targets: audios_arr
         }
+        print(audios_arr.shape)
+        print(audios_arr.dtype)
         _train(
             train_op, 
             feed_dict,
@@ -155,6 +157,9 @@ def main():
     print(audio_pred_array)
     print(audio_pred_array.shape)
     print(audio_pred_array.dtype)
+    print(np.min(audio_pred_array.dtype))
+    print(np.max(audio_pred_array.dtype))
+    print(av.audio.sampleRate)
     writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
     print('write wave done')
     
