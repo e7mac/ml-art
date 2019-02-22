@@ -10,11 +10,11 @@ class VideoDataSet():
     def __init__(self, filename):
         self.filename = filename
         self.imgs = self.videoRead(filename)
-        self.setDtype()
+    #     self.setDtype()
 
-    def setDtype(self):
-        self.imgs = self.imgs / 255.
-        self.imgs = self.imgs.astype(np.float32, copy=False)
+    # def setDtype(self):
+    #     self.imgs = self.imgs / 255.
+    #     self.imgs = self.imgs.astype(np.float32, copy=False)
 
     def mean(self):
         return np.mean(self.imgs, axis=0)
@@ -41,15 +41,13 @@ class VideoDataSet():
         self.frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         minDim = min(self.frameWidth, self.frameHeight)
         dim = (minDim, minDim)
-        buf = np.empty((self.frameCount, self.frameHeight, self.frameWidth, 3), np.dtype('uint8'))
+        buf = np.empty((self.frameCount, self.frameHeight, self.frameWidth, 3), np.dtype('float32'))
         fc = 0
         ret = True
         while (fc < self.frameCount  and ret):
-            ret, buf[fc] = cap.read()
-            # buf[fc] = cv2.resize(buf[fc], dsize=dim)
+            ret, buf[fc] = cap.read() / 255.0
             fc += 1
         cap.release()
-        # buf = cv2.resize(buf, dsize=dim)
         buf = buf[...,::-1] # opencv gets BGR.. convert to RGB
         return buf
 
