@@ -112,8 +112,9 @@ def main():
     
     # Add losses.
     l1_loss = tf.losses.absolute_difference(targets, outputs)
-    tf.losses.add_loss(l1_loss)
-    tf.summary.scalar('l1_loss', l1_loss)
+    l2_loss = tf.losses.mean_squared_error(targets, outputs)
+    tf.losses.add_loss(l2_loss)
+    tf.summary.scalar('l2_loss', l2_loss)
 
     # Train!
     optimizer = tf.train.AdamOptimizer(_LEARNING_RATE)
