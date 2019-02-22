@@ -140,7 +140,7 @@ def main():
 
     # Batch 
     # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    for batch in range(70):
+    for batch in range(70,71):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
@@ -156,7 +156,7 @@ def main():
     audio_pred_array = []
     # Infer 
     # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    for batch in range(70):
+    for batch in range(70,71):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
