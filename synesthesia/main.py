@@ -102,7 +102,7 @@ def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
     print(audioArray)
     print(audioArray.shape)
     print(audioArray.dtype)
-    writeWaveFile(output_directory + '/' + filename, sampleRate, audioArray)
+    writeWaveFile(filename, sampleRate, audioArray)
 
 
 def main():
@@ -125,6 +125,7 @@ def main():
     # Create model.
     outputs = networks.image_encoder(
         inputs, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES)
+    tf.summary.audio('outputs', l2_loss, av.audio.sampleRate)
     
     # Add losses.
     l1_loss = tf.losses.absolute_difference(targets, outputs)
@@ -180,8 +181,8 @@ def main():
     writeWaveFile(output_directory + '/output.wav', av.audio.sampleRate, audio_pred_array)
     print('write wave done')
 
-    flattenAudioAndWriteWav(audio_pred_array, 'preds.wav', av.audio.sampleRate)
-    flattenAudioAndWriteWav(targets, 'targets.wav', av.audio.sampleRate)
+    flattenAudioAndWriteWav(audio_pred_array, output_directory + '/preds.wav', av.audio.sampleRate)
+    flattenAudioAndWriteWav(targets, output_directory + '/targets.wav', av.audio.sampleRate)
     
     
 if __name__ == "__main__":
