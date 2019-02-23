@@ -12,7 +12,7 @@ import tensorflow as tf
 
 _NUM_TEMPORAL_FRAMES = 5
 _AUDIO_DIMS = 1470
-_IMAGE_CROP_SIZE = 256
+_IMAGE_CROP_SIZE = 100
 _LEARNING_RATE = 1e-6
 
 
@@ -77,11 +77,11 @@ def _get_data():
     makeMainDirectories()
 
     # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-small.mp4"
-    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
-    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
+    # sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-medium.mp4"
+    sample = "https://s3-us-west-2.amazonaws.com/e7mac.com/BreakMeMadeira-full.mp4"
     download(sample, 'input/raw')
     # filename = "input/raw/BreakMeMadeira-small.mp4"
-    filename = "input/raw/BreakMeMadeira-medium.mp4"
+    filename = "input/raw/BreakMeMadeira-full.mp4"
 
     av = AudiovisualDataSet(filename)
     return av
