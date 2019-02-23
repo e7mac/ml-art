@@ -6,6 +6,7 @@ import os
 class VideoDataSet():
     """A class to store video data set for AI processing"""
     imgs = []
+    frameDimension = 100
 
     def __init__(self, filename):
         self.filename = filename
@@ -41,12 +42,13 @@ class VideoDataSet():
         self.frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         minDim = min(self.frameWidth, self.frameHeight)
         dim = (minDim, minDim)
-        buf = np.empty((self.frameCount, self.frameHeight, self.frameWidth, 3), np.dtype('float32'))
+        buf = np.empty((self.frameCount, frameDimension, frameDimension, 3), np.dtype('float32'))
+        frame = np.empty((1, self.frameHeight, self.frameWidth, 3), np.dtype('float32'))
         fc = 0
         ret = True
         while (fc < self.frameCount  and ret):
-            ret, buf[fc] = cap.read()            
-            buf[fc] = cv2.resize(buf[fc], (100, 100))
+            ret, frame = cap.read()
+            buf[fc] = cv2.resize(frame, (frameDimension, frameDimension))
             buf[fc] = buf[fc] / 255.0
             fc += 1
         cap.release()
