@@ -39,7 +39,7 @@ def _get_model_init_fn(checkpoint_load_path):
    return restore_fn
  return None
 
-def _train(train_op, feed_dict, train_dir, max_steps=250, summary_steps=10, 
+def _train(train_op, feed_dict, train_dir, max_steps=500, summary_steps=10, 
            log_steps=10, save_checkpoint_secs=180, checkpoint_load_path=None):
     """
     """
@@ -94,8 +94,6 @@ def getTemporalFramesBatchFromData(av, frame, batchSize):
         audios.append(a)
     vs = np.array(vs)
     audios = np.array(audios)
-    print(vs.shape)
-    print(audios.shape)
     return vs, audios
 
 def getTemporalFramesFromData(av, startFrame):
@@ -114,14 +112,7 @@ def writeWaveFile(outputfile, sampleRate, data):
     scipy.io.wavfile.write(outputfile, sampleRate, data)
 
 def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
-    print("---")
-    print(audioArray)
-    print(audioArray.shape)
-    print(audioArray.dtype)
     audioArray = np.array(audioArray, dtype=np.float32).flatten()
-    print(audioArray)
-    print(audioArray.shape)
-    print(audioArray.dtype)
     writeWaveFile(filename, sampleRate, audioArray)
 
 
@@ -159,40 +150,22 @@ def main():
     loss_op = tf.losses.get_total_loss()
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
 
+    from random import shuffle
     # Batch 
-    for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
+    batches = list(range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)))
+    shuffle(batches)
+    for batch in batches:
     # for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
         feed_dict = {
             inputs: images_arr,
             targets: audios_arr
         }
-        print(audios_arr.shape)
-        print(audios_arr.dtype)
         _train(
             train_op, 
             feed_dict,
             train_dir=output_directory + '/tmp/image_to_sound/train')
     print('training done')
-    # audio_pred_array = []
-    # # Infer
-    # # for batch in range(int((av.video.frameCount - 1 - _NUM_TEMPORAL_FRAMES) / batchSize)):
-    # for batch in range(60,61):
-    #     images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
-    #     feed_dict = {
-    #         inputs: images_arr,
-    #         targets: audios_arr
-    #     }
-    #     inference = _infer(outputs, feed_dict)
-    #     print(inference.shape)
-    #     print(inference.dtype)
-    #     print(inference)
-    #     print('infer done')
-    #     audio_pred_array.append(inference.tolist())
-    #     print('append done')
-    # flattenAudioAndWriteWav(inference, output_directory + '/inference.wav', av.audio.sampleRate)
-    # flattenAudioAndWriteWav(audios_arr, output_directory + '/targets.wav', av.audio.sampleRate)
-    
     
 if __name__ == "__main__":
     main()
