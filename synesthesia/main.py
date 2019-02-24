@@ -129,9 +129,9 @@ def main():
     # Set up data
     batchSize = 8
     inputs = tf.placeholder(
-        tf.float32, [batchSize, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES], name='inputs')
+        tf.float32, [None, _IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE, 3 * _NUM_TEMPORAL_FRAMES], name='inputs')
     targets = tf.placeholder(
-        tf.float32, [batchSize, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES], name='targets')
+        tf.float32, [None, _AUDIO_DIMS * _NUM_TEMPORAL_FRAMES], name='targets')
     av = _get_data()
     # Create model.
     outputs = networks.image_encoder(
