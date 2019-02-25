@@ -77,7 +77,7 @@ class VideoDataSet():
                 sliceNum = sliceNum + 1
 
     def extractAudio(self):
-        os.system('ffmpeg -i ' + self.filename + ' ' + self.filename + '.wav')
+        os.system('ffmpeg -n -i ' + self.filename + ' ' + self.filename + '.wav')
         # clip = mp.VideoFileClip(filename)
         # clip.audio.write_audiofile(filename + ".wav")
 

@@ -127,7 +127,7 @@ def main():
     args = sys.argv
     output_directory = "."
     import datetime
-    run = datetime.datetime.now().strftime("%I:%M%p %m-%d-%Y")
+    run = datetime.datetime.now().strftime("%m-%d-%Y %I-%M%p")
 
     for arg in args:
         split = arg.split("--output=")
