@@ -11,6 +11,7 @@ def makeMainDirectories():
     createDirectory('input/raw')
     createDirectory('input/preprocessed')
     createDirectory('output')
+    createDirectory('train')
 
 def download(url, dirName):
     file_name = dirName + '/' + url.split('/')[-1]

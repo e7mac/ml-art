@@ -116,16 +116,27 @@ def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
     audioArray = np.array(audioArray, dtype=np.float32).flatten()
     writeWaveFile(filename, sampleRate, audioArray)
 
+def startTensorboard():
+    os.system('tensorboard --logdir=/Users/mayank/ml-art')
+
+def stopTensorboard(process):
+    process.terminate()
+    os.system('kill ' + str(process.pid))
 
 def main():
     args = sys.argv
     output_directory = "."
+    import datetime
+    run = datetime.datetime.now().strftime("%I:%M%p %m-%d-%Y")
 
     for arg in args:
         split = arg.split("--output=")
         if len(split) > 1:
-            output = split[-1]
-            output_directory = output
+            output_directory = split[-1]
+
+        split = arg.split("--run=")
+        if len(split) > 1:
+            run = split[-1]
 
     # Set up data
     batchSize = 8
@@ -147,6 +158,12 @@ def main():
     tf.summary.scalar('l2_loss', l2_loss)
 
     # Train!
+
+    from multiprocessing import Process
+    createDirectory(output_directory + '/train/' + run)
+    process = Process(target = startTensorboard)
+    process.start()
+
     optimizer = tf.train.AdamOptimizer(_LEARNING_RATE)
     loss_op = tf.losses.get_total_loss()
     train_op = tf.contrib.training.create_train_op(loss_op, optimizer)
@@ -164,8 +181,9 @@ def main():
         _train(
             train_op, 
             feed_dict,
-            train_dir=output_directory + '/train/')
+            train_dir=output_directory + '/train/' + run)
     print('training done')
+    stopTensorboard(process)
     
 if __name__ == "__main__":
     main()
