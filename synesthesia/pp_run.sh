@@ -8,6 +8,5 @@ paperspace jobs create \
 --isPreemptible true \
 --container e7mac/tensorflow-gpu \
 --workspace https://github.com/e7mac/ml-art \
---command cd synesthesia && python train.py \
---output=/storage \
---ports 6006:6006
+--ports 6006:6006 \
+--command "cd synesthesia && python train.py --output=/storage"
