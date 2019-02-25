@@ -102,7 +102,6 @@ def getTemporalFramesFromData(av, startFrame):
     audios = []
     for i in range(_NUM_TEMPORAL_FRAMES):
         v, a = av.slice(startFrame + i)
-        frameset.append(startFrame + i)
         vs.append(cv2.resize(v, (_IMAGE_CROP_SIZE, _IMAGE_CROP_SIZE)))
         audios.append(a[:,0])
     vs = np.concatenate(vs, axis=-1)
@@ -157,7 +156,6 @@ def main():
     batches = list(range(int((av.video.frameCount - _NUM_TEMPORAL_FRAMES) / batchSize)))
     shuffle(batches)
     for batch in batches:
-    # for batch in range(60,61):
         images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch*batchSize, batchSize)
         feed_dict = {
             inputs: images_arr,
