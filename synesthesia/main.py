@@ -11,8 +11,8 @@ import sys
 import tensorflow as tf
 
 _NUM_TEMPORAL_FRAMES = 5
-_AUDIO_DIMS = 1470
-_IMAGE_CROP_SIZE = 100
+_AUDIO_DIMS = 1./30 * 44100 #per frame for 30 fps video
+_IMAGE_CROP_SIZE = 200
 _LEARNING_RATE = 1e-6
 
 
@@ -165,7 +165,7 @@ def main():
         _train(
             train_op, 
             feed_dict,
-            train_dir=output_directory + '/tmp/image_to_sound/train')
+            train_dir=output_directory + '/train/')
     print('training done')
     
 if __name__ == "__main__":

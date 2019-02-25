@@ -6,7 +6,7 @@ import os
 class VideoDataSet():
     """A class to store video data set for AI processing"""
     imgs = []
-    frameDimension = 100
+    frameDimension = 200
 
     def __init__(self, filename):
         self.filename = filename
