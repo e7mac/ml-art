@@ -116,8 +116,8 @@ def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
     audioArray = np.array(audioArray, dtype=np.float32).flatten()
     writeWaveFile(filename, sampleRate, audioArray)
 
-def startTensorboard():
-    os.system('tensorboard --logdir=/Users/mayank/ml-art')
+def startTensorboard(dir):
+    os.system('tensorboard --logdir=' + dir)
 
 def stopTensorboard(process):
     process.terminate()
@@ -160,8 +160,9 @@ def main():
     # Train!
 
     from multiprocessing import Process
-    createDirectory(output_directory + '/train/' + run)
-    process = Process(target = startTensorboard)
+    runDir = output_directory + '/train/' + run
+    createDirectory(runDir)
+    process = Process(target = startTensorboard, args=(runDir,))
     process.start()
 
     optimizer = tf.train.AdamOptimizer(_LEARNING_RATE)
