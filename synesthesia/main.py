@@ -86,11 +86,11 @@ def _get_data():
 
     av = AudiovisualDataSet(filename)
     return av
-def getTemporalFramesBatchFromData(av, frame, batchSize):
+def getTemporalFramesBatchFromData(av, startFrame, batchSize):
     vs = []
     audios = []
     for index in range(batchSize):
-        v, a = getTemporalFramesFromData(av, frame + index)
+        v, a = getTemporalFramesFromData(av, startFrame + index * batchSize)
         vs.append(v)
         audios.append(a)
     vs = np.array(vs)
@@ -157,7 +157,7 @@ def main():
     shuffle(batches)
     for batch in batches:
     # for batch in range(60,61):
-        images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch, batchSize)
+        images_arr, audios_arr = getTemporalFramesBatchFromData(av, batch*batchSize, batchSize)
         feed_dict = {
             inputs: images_arr,
             targets: audios_arr
