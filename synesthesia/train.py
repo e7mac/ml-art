@@ -117,7 +117,7 @@ def flattenAudioAndWriteWav(audioArray, filename, sampleRate):
     writeWaveFile(filename, sampleRate, audioArray)
 
 def startTensorboard(dir):
-    os.system('tensorboard --logdir=' + dir)
+    os.system('tensorboard --logdir="' + dir + '"')
 
 def stopTensorboard(process):
     process.terminate()
