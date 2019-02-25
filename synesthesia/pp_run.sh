@@ -8,5 +8,7 @@ paperspace jobs create \
 --isPreemptible true \
 --container e7mac/tensorflow-gpu \
 --workspace https://github.com/e7mac/ml-art \
---ports 6006:6006 \
+--ports 16006:6006 \
 --command "cd synesthesia && python train.py --output=/storage"
+
+#16006:6006 should map internal 6006 to external 16006
