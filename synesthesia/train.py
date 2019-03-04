@@ -11,9 +11,9 @@ import sys
 import tensorflow as tf
 
 _NUM_TEMPORAL_FRAMES = 5
-_AUDIO_DIMS = 1./30 * 44100 #per frame for 30 fps video
+_AUDIO_DIMS = 1./30 * 48000 * 1.034375 #per frame for 30 fps video
 _IMAGE_CROP_SIZE = 200
-_LEARNING_RATE = 1e-30
+_LEARNING_RATE = 1e-2
 
 
 def _infer(output, feed_dict):

@@ -48,7 +48,7 @@ class VideoDataSet():
         ret = True
         while (fc < self.frameCount  and ret):
             ret, frame = cap.read()
-            buf[fc] = cv2.resize(frame, (self.frameDimension, self.frameDimension))
+            # buf[fc] = cv2.resize(frame, (self.frameDimension, self.frameDimension))
             buf[fc] = buf[fc] / 255.0
             fc += 1
         cap.release()
