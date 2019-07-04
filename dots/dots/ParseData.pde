@@ -10,11 +10,14 @@ HashMap<String, Point> jsonToMap(JSONArray keypoints) {
 }
 
 Pose[][] parseJsonToPoses(JSONArray json) {
-    //numPoses = json.getJSONObject(int(random(json.size()))).getJSONArray("poses").size();
-    numPoses = 1;
+    numPoses = json.getJSONObject(int(random(json.size()))).getJSONArray("poses").size();
+    //numPoses = 1;
     print(numPoses);
     Pose[][] ps = new Pose[numPoses][json.size()];
-    HashMap<String, LowpassPoint> lpPart = new HashMap();
+    ArrayList<HashMap<String, LowpassPoint>> lpPart = new ArrayList<HashMap<String, LowpassPoint>>();
+    for (int i=0;i<numPoses;i++) {
+      lpPart.add(new HashMap());
+    }
     for (int i=0;i<numPoses;i++) {
       Pose previousPose = null;
       for (int j = 0; j < json.size() ; j++) {
@@ -25,10 +28,10 @@ Pose[][] parseJsonToPoses(JSONArray json) {
           Object[] parts = map.keySet().toArray();
           for (int k=0;k<parts.length;k++) {
             String part = (String) parts[k];
-            if (lpPart.get(part) == null) {
-              lpPart.put(part, new LowpassPoint());
+            if (lpPart.get(i).get(part) == null) {
+              lpPart.get(i).put(part, new LowpassPoint());
             }
-            LowpassPoint lp = lpPart.get(part);
+            LowpassPoint lp = lpPart.get(i).get(part);
             map.put(part, lp.process(map.get(part)));
           }
            

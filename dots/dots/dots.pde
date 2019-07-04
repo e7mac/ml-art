@@ -10,7 +10,7 @@ void setup() {
   size(1280, 720);
   frameRate(25);
   smooth();
-  String filename = "nunes";
+  String filename = "salsa";
   JSONArray json = loadJSONArray("../" + filename + ".JSON");
   poses = parseJsonToPoses(json);
   mov = new Movie(this, "/Users/mayank/ml-art/dots/" + filename + ".mp4");
@@ -22,7 +22,7 @@ void setup() {
 void draw() {
   //image(mov, 0, 0);
   //background(0);
-  fill(0, 25);
+  fill(0, 75);
   rect(0,0,width,height);
   float time = mov.time();
   int frameNum = int(time / 0.04);
