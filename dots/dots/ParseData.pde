@@ -10,9 +10,11 @@ HashMap<String, Point> jsonToMap(JSONArray keypoints) {
 }
 
 Pose[][] parseJsonToPoses(JSONArray json) {
-    numPoses = json.getJSONObject(int(random(json.size()))).getJSONArray("poses").size();
-    //numPoses = 1;
-    print(numPoses);
+    numPoses = int(json.getJSONObject(int(random(json.size()))).getJSONArray("poses").size());
+    if (numPoses > 2) {
+      numPoses = 1;
+    }
+    print("Num detected poses:, ", numPoses);
     Pose[][] ps = new Pose[numPoses][json.size()];
     ArrayList<HashMap<String, LowpassPoint>> lpPart = new ArrayList<HashMap<String, LowpassPoint>>();
     for (int i=0;i<numPoses;i++) {
